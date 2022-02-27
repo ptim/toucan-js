@@ -427,33 +427,16 @@ describe('Toucan', () => {
       expect(getFetchMockPayload(global.fetch)).toMatchSnapshot();
     });
 
-    test('setExtras are merged', async () => {
+    test('setExtras are shallow merged', async () => {
       self.addEventListener('fetch', (event) => {
         const toucan = new Toucan({
           dsn: VALID_DSN,
           event,
         });
 
-        /*
-        EXPECT: extras to contain:
-
-        "extra": Object {
-          "foo": Object {
-            "bar": "bar",
-            "baz": "baz",
-          },
-        },
-        */
+        // `foo` is not deeply merged: `baz` overwrites `bar` in upstream code:
+        // https://github.com/getsentry/sentry-javascript/blob/master/packages/hub/src/hub.ts#L313
         toucan.setExtras({ foo: { bar: 'bar' } });
-        /*
-        ACTUAL: second call overwrites the first
-
-        "extra": Object {
-          "foo": Object {
-            "baz": "baz",
-          },
-        },
-        */
         toucan.setExtras({ foo: { baz: 'baz' } });
         toucan.captureMessage('test');
 
@@ -468,7 +451,6 @@ describe('Toucan', () => {
 
       expect(getFetchMockPayload(global.fetch)).toHaveProperty('extra', {
         foo: {
-          bar: 'bar',
           baz: 'baz',
         },
       });

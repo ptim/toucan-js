@@ -172,11 +172,13 @@ export class DurableObjectExample {
 - setRequestBody: Records incoming request's body which will be attached to future events.
 - setTag: Set key:value that will be sent as tags data with the event.
 - setTags: Set an object that will be merged sent as tags data with the event.
-- setExtra: Set key:value that will be sent as extra data with the event.
-- setExtras: Set an object that will be merged sent as extra data with the event.
+- setExtra: Set key:value that will be sent as extra data with the event \*.
+- setExtras: Set an object that will be shallow merged and sent as extra data with the event \*.
 - setUser: Updates user context information for future events.
 - setFingerprint: Overrides the Sentry default grouping.
 - withScope: Creates a new scope and executes the given operation within. The scope is automatically removed once the operation finishes or throws.
+
+\* Re-sending the same top-level key will overwrite existing keys of the same name.
 
 ## Minimal options
 
