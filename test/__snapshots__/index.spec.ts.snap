@@ -630,6 +630,30 @@ Object {
 }
 `;
 
+exports[`Toucan FetchEvent setExtras are merged 1`] = `
+Object {
+  "event_id": "651b177fe1cb4ac89e15c1ecd2cb1d0a",
+  "extra": Object {
+    "foo": Object {
+      "baz": "baz",
+    },
+  },
+  "level": "info",
+  "logger": "EdgeWorker",
+  "message": "test",
+  "platform": "node",
+  "request": Object {
+    "method": "GET",
+    "url": "https://example.com/",
+  },
+  "sdk": Object {
+    "name": "__name__",
+    "version": "__version__",
+  },
+  "timestamp": 1586752837.868,
+}
+`;
+
 exports[`Toucan FetchEvent setRequestBody 1`] = `
 Object {
   "event_id": "651b177fe1cb4ac89e15c1ecd2cb1d0a",

@@ -427,6 +427,53 @@ describe('Toucan', () => {
       expect(getFetchMockPayload(global.fetch)).toMatchSnapshot();
     });
 
+    test('setExtras are merged', async () => {
+      self.addEventListener('fetch', (event) => {
+        const toucan = new Toucan({
+          dsn: VALID_DSN,
+          event,
+        });
+
+        /*
+        EXPECT: extras to contain:
+
+        "extra": Object {
+          "foo": Object {
+            "bar": "bar",
+            "baz": "baz",
+          },
+        },
+        */
+        toucan.setExtras({ foo: { bar: 'bar' } });
+        /*
+        ACTUAL: second call overwrites the first
+
+        "extra": Object {
+          "foo": Object {
+            "baz": "baz",
+          },
+        },
+        */
+        toucan.setExtras({ foo: { baz: 'baz' } });
+        toucan.captureMessage('test');
+
+        event.respondWith(new Response('OK', { status: 200 }));
+      });
+
+      // Trigger fetch event defined above
+      await triggerFetchAndWait(self);
+
+      // Expect POST request to Sentry
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+
+      expect(getFetchMockPayload(global.fetch)).toHaveProperty('extra', {
+        foo: {
+          bar: 'bar',
+          baz: 'baz',
+        },
+      });
+    });
+
     test('setRequestBody', async () => {
       const asyncTest = async (event: FetchEvent) => {
         const toucan = new Toucan({
